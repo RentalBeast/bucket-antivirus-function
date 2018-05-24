@@ -26,13 +26,19 @@ virtualenv env
 pip install --no-cache-dir -r requirements.txt
 
 pushd /tmp
-yumdownloader -x \*i686 --archlist=x86_64 clamav clamav-lib clamav-update
-rpm2cpio clamav-0*.rpm | cpio -idmv
-rpm2cpio clamav-lib*.rpm | cpio -idmv
-rpm2cpio clamav-update*.rpm | cpio -idmv
+#yumdownloader -x \*i686 --archlist=x86_64 clamav clamav-lib clamav-update
+#rpm2cpio clamav-0*.rpm | cpio -idmv
+#rpm2cpio clamav-lib*.rpm | cpio -idmv
+#rpm2cpio clamav-update*.rpm | cpio -idmv
+yum install -y gcc wget findutils libtool libtool-ltdl-devel openssl-devel libxml2-devel llvm-devel json-c-devel curl-devel
+wget https://www.clamav.net/downloads/production/clamav-0.100.0.tar.gz
+tar -xvzf clamav-0.100.0.tar.gz
+cd clamav-0.100.0
+./configure --with-user=root --with-group=wheel --enable-llvm && make
 popd
 mkdir -p bin
-cp /tmp/usr/bin/clamscan /tmp/usr/bin/freshclam /tmp/usr/lib64/* bin/.
+#cp /tmp/usr/bin/clamscan /tmp/usr/bin/freshclam /tmp/usr/lib64/* bin/.
+cp /tmp/clamav-0.100.0/clamscan/clamscan /tmp/clamav-0.100.0/freshclam/freshclam /tmp/clamav-0.100.0/libclamav/.libs/libclamav.so.7* bin/.
 echo "DatabaseMirror database.clamav.net" > bin/freshclam.conf
 
 mkdir -p build
